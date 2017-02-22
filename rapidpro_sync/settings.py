@@ -120,3 +120,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+HOST = 'http://127.0.0.1:8000'
+KEY = '0d784f3c3d9dc0a8f760cc3e2f1169a866945597'

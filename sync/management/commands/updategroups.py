@@ -1,10 +1,9 @@
 from django.core.management import BaseCommand
-from sync.models import Group
-
-__author__ = 'kenneth'
+from sync.models import Tembarun
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        added = Group.add_groups()
-        self.stdout.write(self.style.SUCCESS('Successfully added %d groups' % added))
+        Tembarun.get_runs()
+        self.stdout.write(self.style.SUCCESS('Successfully run tamba'))
+

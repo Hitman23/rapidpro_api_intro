@@ -4,13 +4,25 @@
 </head>
 <body>
 <h1>
-    Groups and Number of Contacts
+    Runs
 </h1>
-<table>
-    <thead><tr><td>Name</td><td>Count</td></tr></thead>
-    {% for group in groups %}
-        <tr><td>{{ group.name }}</td><td>{{ group.count }}</td></tr>
+<p><b>Steps</b></p>
+<div>
+    {% for ss in steps %}
+        {% for s in ss %}
+        <p>{{ s }}</p>
+        {% endfor %}
     {% endfor %}
-</table>
+</div>
+
+<p><b>Values</b></p>
+<div>
+    {% for vv in values %}
+        {% for v in vv %}
+        <p>{{ v }}</p>
+        {% endfor %}
+    {% endfor %}
+</div>
+
 </body>
 </html>
