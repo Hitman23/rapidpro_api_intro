@@ -18,7 +18,7 @@ class Tembarun(models.Model):
         for r in runs:
             if not cls.runid_exists(r):
                 cls.objects.create(run_id=r.id, responded=r.responded, created_on=r.created_on,
-                                   modified_on=r.created_on)
+                                   modified_on=r.modified_on)
                 k = Tembarun.objects.get(run_id=r.id)
                 Tembavalues.get_values(values=r.values, runid=k)
                 Tembasteps.get_steps(path=r.path, runid=k)
