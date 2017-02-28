@@ -19,9 +19,9 @@ class Tembarun(models.Model):
             if not cls.runid_exists(r):
                 cls.objects.create(run_id=r.id, responded=r.responded, created_on=r.created_on,
                                    modified_on=r.modified_on)
-                k = Tembarun.objects.get(run_id=r.id)
-                Tembavalues.get_values(values=r.values, runid=k)
-                Tembasteps.get_steps(path=r.path, runid=k)
+                runobj = Tembarun.objects.get(run_id=r.id)
+                Tembavalues.get_values(values=r.values, runid=runobj)
+                Tembasteps.get_steps(path=r.path, runid=runobj)
                 number_of_runs += 1
         return number_of_runs
 
@@ -30,7 +30,7 @@ class Tembarun(models.Model):
         return cls.objects.filter(run_id=r.id).exists()
 
     def __unicode__(self):
-        return self.run_id
+        return str(self.run_id)
 
 
 class Tembaflows(models.Model):
