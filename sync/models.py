@@ -7,6 +7,7 @@ client = TembaClient(settings.HOST, settings.KEY)
 
 class Tembarun(models.Model):
     run_id = models.IntegerField(default=0)
+    flow_name = models.CharField(max_length=100, null=True)
     responded = models.BooleanField(default=False)
     created_on = models.DateTimeField(null=True)
     modified_on = models.DateTimeField(null=True)
@@ -14,20 +15,33 @@ class Tembarun(models.Model):
     @classmethod
     def get_runs(cls):
         runs = client.get_runs().all()
-        number_of_runs = 0
+        added_runs = 0
         for r in runs:
             if not cls.runid_exists(r):
-                cls.objects.create(run_id=r.id, responded=r.responded, created_on=r.created_on,
-                                   modified_on=r.modified_on)
-                runobj = Tembarun.objects.get(run_id=r.id)
-                Tembavalues.get_values(values=r.values, runid=runobj)
-                Tembasteps.get_steps(path=r.path, runid=runobj)
-                number_of_runs += 1
-        return number_of_runs
+                runobj = cls.objects.create(run_id=r.id, flow_name=r.flow.name, responded=r.responded,
+                                            created_on=r.created_on,
+                                            modified_on=r.modified_on)
+                Tembavalues.create_values(values=r.values, runid=runobj)
+                Tembasteps.create_steps(path=r.path, runid=runobj)
+                added_runs += 1
+        return added_runs
 
     @classmethod
     def runid_exists(cls, r):
         return cls.objects.filter(run_id=r.id).exists()
+
+    @classmethod
+    def create_view_data(cls):
+        runs = Tembarun.objects.all()
+        complete_array_step = []
+        complete_array_value = []
+        for r in runs:
+            steps = create_list(Tembasteps, r)
+            complete_array_step.append(steps)
+            values = create_list(Tembavalues, r)
+            complete_array_value.append(values)
+
+        return {'step': complete_array_step, 'value': complete_array_value}
 
     def __unicode__(self):
         return str(self.run_id)
@@ -68,7 +82,7 @@ class Tembasteps(models.Model):
     run_id = models.ForeignKey(Tembarun, null=True)
 
     @classmethod
-    def get_steps(cls, path, runid):
+    def create_steps(cls, path, runid):
         for p in path:
             cls.objects.create(node=p.node, time=p.time, run_id=runid)
 
@@ -81,9 +95,17 @@ class Tembavalues(models.Model):
     run_id = models.ForeignKey(Tembarun, null=True)
 
     @classmethod
-    def get_values(cls, values, runid):
+    def create_values(cls, values, runid):
         for v in values:
             cls.objects.create(value=v, run_id=runid)
 
     def __str__(self):
         return self.value
+
+
+def create_list(obj, r):
+    intermediate_array_step = []
+    passed_object = obj.objects.filter(run_id=r)
+    for o in passed_object:
+        intermediate_array_step.append(o)
+    return intermediate_array_step

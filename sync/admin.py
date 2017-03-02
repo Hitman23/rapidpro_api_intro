@@ -5,10 +5,11 @@ from .models import Tembarun, Tembasteps, Tembavalues
 
 
 class TembarunAdmin(admin.ModelAdmin):
-    list_display = ('run_id', 'created_on', 'modified_on', 'responded')
+    list_display = ('run_id', 'flow_name', 'created_on', 'modified_on', 'responded')
 
     fieldsets = [
         (None, {'fields': ['run_id']}),
+        (None, {'fields': ['flow_name']}),
         (None, {'fields': ['responded']}),
         (None, {'fields': ['created_on']}),
         (None, {'fields': ['modified_on']}),
